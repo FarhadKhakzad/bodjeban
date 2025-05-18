@@ -1,2 +1,3 @@
 model.py
 .env
+.venv/
