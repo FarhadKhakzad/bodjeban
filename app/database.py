@@ -3,7 +3,7 @@
     ماژول اتصال به پایگاه داده برای پروژه بوجبان 
 """
 
-# database.py
+# routes/database.py
 
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -17,6 +17,9 @@ load_dotenv()
 # رشته اتصال به MongoDB
 mongo_url = os.getenv("MONGO_URI")
 db_name = os.getenv("DB_NAME")
+
+if db_name is None:
+    raise ValueError("Environment variable DB_NAME is not set.")
 
 # Create a MongoDB client
 # ایجاد یک کلاینت MongoDB

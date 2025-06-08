@@ -1,6 +1,6 @@
 """
     Income models for bodjeban project.
-    مدل‌های مربوط به درآمد برای پروژه بوجبان
+    مدل‌های مربوط به درآمد برای پروژه بودجبان
 
     - IncomeIn: مدل ورودی برای ثبت درآمد جدید
     - IncomeOut: مدل خروجی برای نمایش درآمدها با فیلدهای اضافی مثل شناسه و زمان ایجاد
@@ -8,9 +8,10 @@
 
 # models/income_model.py
 
-from datetime import datetime
+from pydantic import BaseModel, Field, validator
 from typing import Optional
-from pydantic import BaseModel, Field
+from datetime import datetime
+import jdatetime
 
 class IncomeIn(BaseModel):
     """
@@ -19,13 +20,29 @@ class IncomeIn(BaseModel):
     ویژگی‌ها:
     - title: عنوان درآمد (مثلاً "حقوق")
     - amount: مبلغ درآمد به صورت عدد اعشاری
-    - date: تاریخ و زمان درآمد به صورت datetime استاندارد ISO8601
+    - date: تاریخ و زمان درآمد به صورت datetime، هم میلادی و هم شمسی پذیرفته می‌شود
     - description: توضیح اختیاری درباره درآمد
     """
-    title: str = Field(..., examples=["salary"])
+    title: str = Field(..., examples=["حقوق"])
     amount: float = Field(..., examples=[10000000])
-    date: datetime = Field(..., examples=["2025-05-17T12:00:00"])
-    description: Optional[str] = Field(None, examples=["Monthly salary"])
+    date: datetime = Field(..., examples=["2025-06-10T14:00:00", "1404-03-20 14:00"])
+    description: Optional[str] = Field(None, examples=["حقوق ماهانه"])
+
+    @validator("date", pre=True)
+    def check_date(cls, value):
+        """
+        اعتبارسنجی تاریخ: ابتدا سعی می‌کنیم به عنوان تاریخ شمسی تجزیه کنیم،
+        در غیر این‌صورت آن را به عنوان تاریخ میلادی در نظر می‌گیریم.
+        """
+        if isinstance(value, datetime):
+            return value
+        try:
+            # سعی در تبدیل تاریخ شمسی به میلادی
+            jdt = jdatetime.datetime.strptime(value, "%Y-%m-%d %H:%M")
+            return jdt.togregorian()
+        except Exception:
+            # اگر تبدیل به شمسی نشد، فرض بر میلادی بودن است
+            return datetime.fromisoformat(value)
 
 class IncomeOut(IncomeIn):
     """
