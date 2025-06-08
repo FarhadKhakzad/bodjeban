@@ -8,9 +8,9 @@
 
 # models/income_model.py
 
-from pydantic import BaseModel, Field, validator
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel, Field, validator
 import jdatetime
 
 class IncomeIn(BaseModel):
@@ -40,7 +40,7 @@ class IncomeIn(BaseModel):
             # سعی در تبدیل تاریخ شمسی به میلادی
             jdt = jdatetime.datetime.strptime(value, "%Y-%m-%d %H:%M")
             return jdt.togregorian()
-        except Exception:
+        except ValueError:
             # اگر تبدیل به شمسی نشد، فرض بر میلادی بودن است
             return datetime.fromisoformat(value)
 

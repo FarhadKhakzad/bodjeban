@@ -1,12 +1,15 @@
+"""
+    Routes for income management in bodjeban project.
+    مسیرهای مربوط به درآمدها در پروژه بودجبان
+"""
+
 # routes/income.py
 
-from app.models.income_model import IncomeIn, IncomeOut
-from fastapi import APIRouter, HTTPException
-from app.models.income_model import IncomeIn
-from app.database import db
 from datetime import datetime
-import jdatetime
+from fastapi import APIRouter, HTTPException
 
+from app.models.income_model import IncomeIn, IncomeOut
+from app.database import db
 
 router = APIRouter()
 
